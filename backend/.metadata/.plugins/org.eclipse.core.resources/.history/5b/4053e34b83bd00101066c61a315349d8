@@ -1,0 +1,31 @@
+package com.cropdeal.payment.controller;
+
+import com.cropdeal.payment.entity.Payment;
+import com.cropdeal.payment.repository.PaymentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@RestController
+@RequestMapping("/payments/admin")
+@RequiredArgsConstructor
+public class AdminPaymentController {
+
+    private final PaymentRepository repo;
+
+    @GetMapping
+    public List<Payment> all() {
+        return repo.findAll();
+    }
+
+    @GetMapping("/range")
+    public ResponseEntity<?> byRange(@RequestParam String from, @RequestParam String to) {
+        LocalDateTime f = LocalDateTime.parse(from);
+        LocalDateTime t = LocalDateTime.parse(to);
+        var rows = repo.findByPaymentDateBetween(f, t);
+        return ResponseEntity.ok(rows);
+    }
+}

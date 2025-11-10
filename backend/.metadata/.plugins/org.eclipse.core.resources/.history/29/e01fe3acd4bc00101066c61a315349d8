@@ -1,0 +1,5 @@
+package com.cropdeal.request.events;
+
+public class PaymentCompletedEvent {
+
+}

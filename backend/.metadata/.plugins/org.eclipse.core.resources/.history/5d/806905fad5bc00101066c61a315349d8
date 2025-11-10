@@ -1,0 +1,76 @@
+package com.cropdeal.request.listener;
+
+import com.cropdeal.request.config.RabbitConfig;
+import com.cropdeal.request.entity.CropRequest;
+import com.cropdeal.request.events.PaymentCompletedEvent;
+import com.cropdeal.request.repository.CropRequestRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Component
+public class PaymentEventListener {
+
+    private final CropRequestRepository repo;
+
+    public PaymentEventListener(CropRequestRepository repo) {
+        this.repo = repo;
+    }
+
+    /**
+     * Listens for payment.completed events.
+     * If the event included requestId -> update that request.
+     * If requestId is missing, attempt best-effort lookup (dealer+farmer+crop where status=ACCEPTED).
+     */
+    @RabbitListener(queues = "#{T(org.springframework.amqp.core.TopicExchange).class != null ? null : null}", // not used; using binding in config below
+                    containerFactory = "rabbitListenerContainerFactory")
+    @Transactional
+    public void handlePaymentCompleted(PaymentCompletedEvent evt) {
+        try {
+            if (evt == null) return;
+
+            Long reqId = evt.getRequestId();
+            CropRequest target = null;
+
+            if (reqId != null) {
+                Optional<CropRequest> maybe = repo.findById(reqId);
+                if (maybe.isPresent()) target = maybe.get();
+            }
+
+            if (target == null) {
+                // Best-effort: find the accepted request matching farmerId/dealerId/cropId
+                // Note: you may want a repository method to do this; for simplicity we scan:
+                var list = repo.findByFarmerId(evt.getFarmerId());
+                for (CropRequest r : list) {
+                    if (r.getDealerId() != null && r.getDealerId().equals(evt.getDealerId())
+                        && r.getCropId() != null && r.getCropId().equals(evt.getCropId())
+                        && ("ACCEPTED".equalsIgnoreCase(r.getStatus()) || "APPROVED".equalsIgnoreCase(r.getStatus()))) {
+                        target = r;
+                        break;
+                    }
+                }
+            }
+
+            if (target == null) {
+                // nothing to update — log and return
+                System.out.println("PaymentEventListener: request not found for paymentId=" + evt.getPaymentId());
+                return;
+            }
+
+            // Mark completed: set totalAmount, estimate pricePerUnit if quantity present
+            target.setTotalAmount(evt.getAmount());
+            if (target.getQuantity() != null && target.getQuantity() > 0 && (target.getPricePerUnit() == null || target.getPricePerUnit() == 0)) {
+                target.setPricePerUnit(evt.getAmount() / target.getQuantity());
+            }
+            target.setStatus("COMPLETED");
+            target.setCompletedAt(LocalDateTime.now());
+            repo.save(target);
+            System.out.println("PaymentEventListener: marked request " + target.getId() + " as COMPLETED");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}

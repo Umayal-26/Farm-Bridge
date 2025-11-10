@@ -1,0 +1,33 @@
+package com.example.crop.repository;
+
+import com.example.crop.entity.Crop;
+import com.example.crop.entity.CropStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface CropRepository extends JpaRepository<Crop, Long> {
+
+    List<Crop> findByFarmerId(Long farmerId);
+    List<Crop> findByType(String type);
+    List<Crop> findByStatus(CropStatus status);
+
+    Page<Crop> findByStatus(CropStatus status, Pageable pageable);
+
+    Page<Crop> findByNameContainingIgnoreCaseOrTypeContainingIgnoreCaseOrLocationContainingIgnoreCase(
+            String name, String type, String location, Pageable pageable
+    );
+
+    @Query("""
+      select c from Crop c
+      where c.status = 'APPROVED'
+        and ( lower(c.name) like :like
+           or lower(c.type) like :like
+           or lower(c.location) like :like )
+    """)
+    Page<Crop> searchApproved(@Param("like") String like, Pageable pageable);
+}

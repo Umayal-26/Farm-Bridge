@@ -1,0 +1,29 @@
+package com.cropdeal.gateway.config;
+
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+
+@Configuration
+public class JwtUserHeadersConfig {
+
+    @Bean
+    public GlobalFilter userHeadersFilter() {
+        return (exchange, chain) ->
+            ReactiveSecurityContextHolder.getContext()
+                .filter(ctx -> ctx.getAuthentication() != null && ctx.getAuthentication().getPrincipal() instanceof Jwt)
+                .flatMap(ctx -> {
+                    Jwt jwt = (Jwt) ctx.getAuthentication().getPrincipal();
+                    var builder = exchange.mutate().request(r -> r.headers(h -> {
+                        if (jwt.hasClaim("userId")) h.set("X-User-Id", jwt.getClaim("userId").toString());
+                        if (jwt.hasClaim("role")) h.set("X-User-Role", jwt.getClaim("role").toString());
+                        h.set("X-User-Email", jwt.getSubject());
+                        h.remove("Cookie");
+                    }));
+                    return chain.filter(builder.build());
+                })
+                .switchIfEmpty(chain.filter(exchange));
+    }
+}

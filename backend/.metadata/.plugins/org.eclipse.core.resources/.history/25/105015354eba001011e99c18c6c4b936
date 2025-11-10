@@ -1,0 +1,13 @@
+package com.example.crop.repository;
+
+import com.example.crop.entity.CropRequest;
+import com.example.crop.entity.RequestStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface CropRequestRepository extends JpaRepository<CropRequest, Long> {
+    List<CropRequest> findByFarmerId(Long farmerId);
+    List<CropRequest> findByDealerId(Long dealerId);
+    List<CropRequest> findByFarmerIdAndStatus(Long farmerId, RequestStatus status);
+}

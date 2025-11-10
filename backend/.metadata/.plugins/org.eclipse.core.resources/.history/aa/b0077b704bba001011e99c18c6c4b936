@@ -1,0 +1,43 @@
+package com.example.crop.controller;
+
+import com.example.crop.entity.CropRequest;
+import com.example.crop.service.CropRequestService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/requests")
+@RequiredArgsConstructor
+
+public class CropRequestController {
+
+    private final CropRequestService service;
+
+    // Dealer sends request (farmerId will be derived from crop)
+    @PostMapping
+
+    public ResponseEntity<?> sendRequest(@RequestBody CropRequest request,
+                                         @RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(service.sendRequest(request, authHeader));
+    }
+
+    // Role-aware: Farmer → incoming to him; Dealer → his own sent; Admin → all
+    @GetMapping("/my")
+    public ResponseEntity<?> myRequests(@RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(service.getRequestsForUser(authHeader));
+    }
+
+    // Farmer approves or rejects a request targeting his crop
+    @PutMapping("/{id}/status/{status}")
+
+    public ResponseEntity<?> updateStatus(@PathVariable Long id,
+                                          @PathVariable String status,
+                                          @RequestHeader("Authorization") String authHeader) {
+        try {
+            return ResponseEntity.ok(service.updateRequestStatus(id, status.toUpperCase(), authHeader));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+}

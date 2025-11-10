@@ -1,0 +1,119 @@
+package com.example.crop.service;
+
+import com.example.crop.config.RabbitConfig;
+import com.example.crop.entity.Crop;
+import com.example.crop.entity.CropRequest;
+import com.example.crop.repository.CropRepository;
+import com.example.crop.repository.CropRequestRepository;
+import com.example.crop.util.JwtUtil;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class CropRequestService {
+
+    private final CropRequestRepository requestRepo;
+    private final CropRepository cropRepo;
+    private final RabbitTemplate rabbitTemplate;
+    private final JwtUtil jwtUtil;
+
+    public CropRequestService(CropRequestRepository requestRepo,
+                              CropRepository cropRepo,
+                              RabbitTemplate rabbitTemplate,
+                              JwtUtil jwtUtil) {
+        this.requestRepo = requestRepo;
+        this.cropRepo = cropRepo;
+        this.rabbitTemplate = rabbitTemplate;
+        this.jwtUtil = jwtUtil;
+    }
+
+    // Dealer sends purchase request
+    public Map<String, Object> sendRequest(CropRequest request, String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        Long dealerId = jwtUtil.extractUserId(token);
+        String role = jwtUtil.extractRole(token);
+        if (!"DEALER".equalsIgnoreCase(role)) {
+            throw new RuntimeException("Only DEALER can send requests");
+        }
+
+        if (request.getCropId() == null) {
+            throw new RuntimeException("cropId is required");
+        }
+
+        Crop crop = cropRepo.findById(request.getCropId())
+                .orElseThrow(() -> new RuntimeException("Crop not found"));
+
+        // derive farmerId from crop, ignore any farmerId from client
+        Long farmerId = crop.getFarmerId();
+
+        // dealer cannot request his own crop
+        if (farmerId != null && farmerId.equals(dealerId)) {
+            throw new RuntimeException("You cannot request your own crop");
+        }
+
+        request.setDealerId(dealerId);
+        request.setFarmerId(farmerId);
+        request.setRequestDate(LocalDateTime.now());
+        request.setStatus("PENDING");
+
+        CropRequest saved = requestRepo.save(request);
+
+        // publish to exchange (routing key includes crop id)
+        rabbitTemplate.convertAndSend(RabbitConfig.CROP_EXCHANGE, "crop.requested." + saved.getCropId(), saved);
+
+        return Map.of(
+                "message", "Request sent",
+                "requestId", saved.getId(),
+                "farmerId", farmerId,
+                "dealerId", dealerId
+        );
+    }
+
+    // Role-aware fetch
+    public List<CropRequest> getRequestsForUser(String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        String role = jwtUtil.extractRole(token);
+        Long userId = jwtUtil.extractUserId(token);
+
+        switch (role.toUpperCase()) {
+            case "FARMER":
+                return requestRepo.findByFarmerId(userId);
+            case "DEALER":
+                return requestRepo.findByDealerId(userId);
+            case "ADMIN":
+                return requestRepo.findAll();
+            default:
+                throw new RuntimeException("Unknown role: " + role);
+        }
+    }
+
+    // Farmer can approve/reject only his requests
+    public Map<String, Object> updateRequestStatus(Long requestId, String status, String authHeader) throws Exception {
+        String token = authHeader.replace("Bearer ", "");
+        String role = jwtUtil.extractRole(token);
+        Long farmerId = jwtUtil.extractUserId(token);
+
+        if (!"FARMER".equalsIgnoreCase(role)) {
+            throw new RuntimeException("Only FARMER can update request status");
+        }
+
+        CropRequest req = requestRepo.findById(requestId)
+                .orElseThrow(() -> new Exception("Request not found"));
+
+        if (!farmerId.equals(req.getFarmerId())) {
+            throw new RuntimeException("You can only update requests for your own crops");
+        }
+
+        if (!List.of("PENDING", "APPROVED", "REJECTED").contains(status)) {
+            throw new RuntimeException("Invalid status: " + status);
+        }
+
+        req.setStatus(status);
+        requestRepo.save(req);
+        return Map.of("message", "Status updated", "id", req.getId(), "status", status);
+    }
+}

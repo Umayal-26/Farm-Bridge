@@ -1,0 +1,146 @@
+package com.example.crop.service;
+
+import com.example.crop.config.RabbitConfig;
+import com.example.crop.entity.Crop;
+import com.example.crop.entity.CropStatus;
+import com.example.crop.events.CropPublishedEvent;
+import com.example.crop.repository.CropRepository;
+import com.example.crop.util.JwtUtil;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+@Service
+public class CropService {
+
+    private final CropRepository repo;
+    private final RabbitTemplate rabbitTemplate;
+    private final JwtUtil jwtUtil;
+
+    public CropService(CropRepository repo, RabbitTemplate rabbitTemplate, JwtUtil jwtUtil) {
+        this.repo = repo;
+        this.rabbitTemplate = rabbitTemplate;
+        this.jwtUtil = jwtUtil;
+    }
+
+    public Map<String, Object> addCropWithImage(Crop crop, MultipartFile image, String authHeader) {
+        String role = extractRole(authHeader);
+        Long farmerId = extractUserId(authHeader);
+
+        if (!"FARMER".equalsIgnoreCase(role)) {
+            throw new RuntimeException("Only FARMER can add crops");
+        }
+
+        crop.setFarmerId(farmerId);
+        crop.setCreatedAt(LocalDateTime.now());
+        crop.setUpdatedAt(LocalDateTime.now());
+        crop.setStatus(CropStatus.PENDING);
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                Path uploadDir = Paths.get("uploads");
+                if (!Files.exists(uploadDir)) Files.createDirectories(uploadDir);
+                String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
+                Path filePath = uploadDir.resolve(fileName);
+                Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                crop.setImageUrl("/uploads/" + fileName);
+            } catch (IOException e) {
+                throw new RuntimeException("Image upload failed: " + e.getMessage());
+            }
+        }
+
+        Crop saved = repo.save(crop);
+
+        CropPublishedEvent event = new CropPublishedEvent(
+                saved.getId(), saved.getName(), saved.getType(),
+                saved.getQuantity(), saved.getLocation(),
+                saved.getPricePerUnit(), saved.getFarmerId(), Instant.now()
+        );
+
+        rabbitTemplate.convertAndSend(RabbitConfig.CROP_EXCHANGE, "crop.published." + saved.getName(), event);
+        return Map.of("message", "Crop added successfully", "id", saved.getId());
+    }
+
+    public Crop getById(Long id) {
+        return repo.findById(id).orElse(null);
+    }
+
+    public Crop updateCrop(Crop updated, String authHeader) {
+        String role = extractRole(authHeader);
+        Long userId = extractUserId(authHeader);
+
+        Crop existing = repo.findById(updated.getId())
+                .orElseThrow(() -> new RuntimeException("Crop not found"));
+
+        if (!"ADMIN".equalsIgnoreCase(role) && !existing.getFarmerId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to update this crop");
+        }
+
+        existing.setName(updated.getName());
+        existing.setType(updated.getType());
+        existing.setQuantity(updated.getQuantity());
+        existing.setLocation(updated.getLocation());
+        existing.setPricePerUnit(updated.getPricePerUnit());
+        existing.setUpdatedAt(LocalDateTime.now());
+
+        return repo.save(existing);
+    }
+
+    public void deleteCrop(Long id, String authHeader) {
+        String role = extractRole(authHeader);
+        Long userId = extractUserId(authHeader);
+
+        Crop existing = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Crop not found"));
+
+        if (!"ADMIN".equalsIgnoreCase(role) && !existing.getFarmerId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to delete this crop");
+        }
+
+        repo.deleteById(id);
+    }
+
+    // Visible crops for listing (Angular uses /crops and /crops/search with Pageable)
+    public Page<Crop> findVisible(Pageable pageable, String authHeader) {
+        return repo.findByStatus(CropStatus.APPROVED, pageable);
+    }
+
+    public Page<Crop> searchVisible(String q, Pageable pageable, String authHeader) {
+        String like = "%" + q.toLowerCase() + "%";
+        return repo.searchApproved(like, pageable);
+    }
+
+    // Role-aware list for "My Crops" tab (non-pageable)
+    public List<Crop> getCropsForUser(String authHeader) {
+        String role = extractRole(authHeader);
+        Long userId = extractUserId(authHeader);
+
+        switch (role.toUpperCase()) {
+            case "FARMER": return repo.findByFarmerId(userId);
+            case "DEALER": return repo.findByStatus(CropStatus.APPROVED);
+            case "ADMIN":  return repo.findAll();
+            default:       throw new RuntimeException("Unknown role: " + role);
+        }
+    }
+
+    // helpers
+    private String extractRole(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return "PUBLIC";
+        return jwtUtil.extractRole(authHeader.substring(7));
+    }
+
+    private Long extractUserId(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return null;
+        return jwtUtil.extractUserId(authHeader.substring(7));
+    }
+}

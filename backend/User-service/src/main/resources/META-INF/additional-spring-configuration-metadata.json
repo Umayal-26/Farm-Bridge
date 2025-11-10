@@ -1,0 +1,87 @@
+{"properties": [
+  {
+    "name": "spring.cloud.config.import-check.enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.cloud.config.import-check.enabled'"
+  },
+  {
+    "name": "e)\r\nspring.security.oauth2.client.registration.google.clien",
+    "type": "java.lang.String",
+    "description": "A description for 'e)\r\nspring.security.oauth2.client.registration.google.clien'"
+  },
+  {
+    "name": "om\r\nspring.security.oauth2.client.registration.google.client-se",
+    "type": "java.lang.String",
+    "description": "A description for 'om\r\nspring.security.oauth2.client.registration.google.client-se'"
+  },
+  {
+    "name": "kM\r\nspring.security.oauth2.client.registration.google.s",
+    "type": "java.lang.String",
+    "description": "A description for 'kM\r\nspring.security.oauth2.client.registration.google.s'"
+  },
+  {
+    "name": "il\r\nspring.security.oauth2.client.registration.google.redirect",
+    "type": "java.lang.String",
+    "description": "A description for 'il\r\nspring.security.oauth2.client.registration.google.redirect'"
+  },
+  {
+    "name": "d}\r\nspring.security.oauth2.client.registration.google.client-",
+    "type": "java.lang.String",
+    "description": "A description for 'd}\r\nspring.security.oauth2.client.registration.google.client-'"
+  },
+  {
+    "name": "pp\r\napp.oauth2.redirect",
+    "type": "java.lang.String",
+    "description": "A description for 'pp\r\napp.oauth2.redirect'"
+  },
+  {
+    "name": "ce\r\ngoogle.clie",
+    "type": "java.lang.String",
+    "description": "A description for 'ce\r\ngoogle.clie'"
+  },
+  {
+    "name": "=\r\nlogging.level.r",
+    "type": "java.lang.String",
+    "description": "A description for '=\r\nlogging.level.r'"
+  },
+  {
+    "name": "O\r\nlogging.level.org.springframework.",
+    "type": "java.lang.String",
+    "description": "A description for 'O\r\nlogging.level.org.springframework.'"
+  },
+  {
+    "name": "O\r\nlogging.level.com.example.usermanagem",
+    "type": "java.lang.String",
+    "description": "A description for 'O\r\nlogging.level.com.example.usermanagem'"
+  },
+  {
+    "name": "\r\napp.jwt.expirati",
+    "type": "java.lang.String",
+    "description": "A description for '\r\napp.jwt.expirati'"
+  },
+  {
+    "name": "\r\napp.jwt.secr",
+    "type": "java.lang.String",
+    "description": "A description for '\r\napp.jwt.secr'"
+  },
+  {
+    "name": "\neureka.client.service-url.defaultZon",
+    "type": "java.lang.String",
+    "description": "A description for '\neureka.client.service-url.defaultZon'"
+  },
+  {
+    "name": "\neureka.instance.prefer-ip-addres",
+    "type": "java.lang.String",
+    "description": "A description for '\neureka.instance.prefer-ip-addres'"
+  },
+  {
+    "name": "kM\r\nspring.security.oauth2.client.registration.google.s",
+    "type": "java.lang.String",
+    "description": "A description for 'kM\r\nspring.security.oauth2.client.registration.google.s'"
+  },
+  {
+    "name": "kM\r\nspring.security.oauth2.client.registration.google.s",
+    "type": "java.lang.String",
+    "description": "A description for 'kM\r\nspring.security.oauth2.client.registration.google.s'"
+  }
+]}
