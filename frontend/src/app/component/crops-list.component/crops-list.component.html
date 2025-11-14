@@ -1,0 +1,81 @@
+<div class="market-container">
+  <h2 class="page-title">🛒 Available Crops</h2>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search by name, type, or location..."
+      [(ngModel)]="query"
+      (keyup.enter)="search()"
+    />
+    <button class="btn btn-primary" (click)="search()">
+      <i class="bi bi-search"></i> Search
+    </button>
+  </div>
+
+  <!-- Loading skeleton -->
+  <div *ngIf="loading" class="grid">
+    <div class="card skeleton" *ngFor="let s of [1,2,3,4,5,6,7,8,9]">
+      <div class="img shimmer"></div>
+      <div class="body">
+        <div class="line shimmer w-60"></div>
+        <div class="line shimmer w-40"></div>
+        <div class="line shimmer w-80"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info message -->
+  <div *ngIf="!loading && message" class="alert">{{ message }}</div>
+
+  <!-- Cards grid -->
+  <div class="grid" *ngIf="!loading && crops.length">
+    <div class="card" *ngFor="let crop of crops">
+      <img [src]="resolveImage(crop.imageUrl)" [alt]="crop.name" class="image" />
+      <div class="body">
+        <div class="row1">
+          <h5 class="name">{{ crop.name }}</h5>
+          <span class="chip">{{ crop.type || '—' }}</span>
+        </div>
+
+        <div class="meta">
+          <div class="meta-item">
+            <i class="bi bi-geo-alt"></i>
+            <span>{{ crop.location || 'Unknown' }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="bi bi-box-seam"></i>
+            <span>{{ crop.quantity ?? 'N/A' }}</span>
+          </div>
+        </div>
+
+        <div class="price">₹ {{ crop.pricePerUnit || 0 | number:'1.2-2' }} / unit</div>
+
+        <button class="btn btn-outline" (click)="addToCart(crop)">
+  <i class="bi bi-cart-plus"></i> Add to Cart
+</button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+<div *ngIf="!loading && !crops.length && !message" class="empty">
+  <img src="assets/placeholder.jpg" alt="No crops" class="image" />
+  <p>No crops available at the moment. 🌱</p>
+</div>
+
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && totalPages > 1" class="pager">
+    <button class="btn btn-outline" (click)="changePage(page - 1)" [disabled]="page === 0">
+      <i class="bi bi-chevron-left"></i> Prev
+    </button>
+    <span>Page {{ page + 1 }}</span>
+    <button class="btn btn-outline" (click)="changePage(page + 1)" [disabled]="page + 1 >= totalPages">
+      Next <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+</div>

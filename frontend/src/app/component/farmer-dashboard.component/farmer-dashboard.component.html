@@ -1,0 +1,120 @@
+<div class="farmer-dashboard">
+  <header class="fd-header">
+    <h1 class="title">👩‍🌾 Farmer Dashboard</h1>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </header>
+
+  <p class="status-message" *ngIf="message">{{ message }}</p>
+
+  <!-- Add Crop Section -->
+  <section class="add-crop card">
+    <h3 class="subheading">🌱 Add New Crop</h3>
+    <div class="form">
+      <input type="text" placeholder="Crop name (e.g., Tomato)" [(ngModel)]="newCrop.name" />
+      <input type="text" placeholder="Type (Vegetables / Fruits / Grains)" [(ngModel)]="newCrop.type" />
+      <input type="number" placeholder="Price per unit" [(ngModel)]="newCrop.pricePerUnit" />
+      <input type="number" placeholder="Quantity" [(ngModel)]="newCrop.quantity" />
+      <input type="text" placeholder="Location" [(ngModel)]="newCrop.location" />
+      <input type="text" placeholder="Image URL (optional)" [(ngModel)]="newCrop.imageUrl" />
+
+      <!-- CUSTOM file upload block (replaces native one) -->
+<div class="file-upload" role="group" aria-label="Upload crop image">
+  <!-- file input moved inside the label so only the label is clickable -->
+  <label for="fileInput" class="file-btn">
+    📁 Choose File
+    <input id="fileInput" type="file" accept="image/*" (change)="onFileChange($event)" />
+  </label>
+
+  <span class="file-name" title="{{ selectedFileName }}">{{ selectedFileName }}</span>
+</div>
+
+
+      <!-- Add button uses .btn-add (clear visible style) -->
+      <button type="button" class="btn-add" (click)="addCrop()" [disabled]="loading">
+        {{ loading ? 'Adding…' : 'Add Crop' }}
+      </button>
+    </div>
+  </section>
+
+  <!-- Crop Listings -->
+  <section *ngFor="let section of sectionsOrder">
+    <h3 class="subheading">{{ section }}</h3>
+
+    <div class="crop-list" *ngIf="grouped[section]?.length; else emptySection">
+      <div class="crop-card" *ngFor="let c of grouped[section]">
+        <img class="crop-img" [src]="resolveImage(c.imageUrl)" [alt]="c.name" (error)="onImageError($event)" />
+        <div class="info">
+          <h3>{{ c.name }}</h3>
+          <p class="meta">
+            <span class="chip">{{ c.type }}</span>
+            <span class="dot">•</span>
+            <span class="price">₹{{ c.pricePerUnit }} <small>/ unit</small></span>
+            <span class="dot">•</span>
+            <span class="qty">{{ c.quantity }} qty</span>
+            <span class="dot" *ngIf="c.location">•</span>
+            <span *ngIf="c.location">{{ c.location }}</span>
+          </p>
+          <div class="actions">
+            <button type="button" (click)="viewOffers(c)">View Offers</button>
+            <button type="button" class="delete" (click)="deleteCrop(c.id!)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptySection>
+      <p class="empty">No crops in {{ section }}.</p>
+    </ng-template>
+  </section>
+
+  <!-- Offers Modal -->
+  <div *ngIf="showOffers" class="fd-modal-overlay" (click)="closeModal()">
+    <div class="fd-modal" (click)="$event.stopPropagation()">
+      <h3>Offers for {{ selectedCrop?.name }}</h3>
+
+      <table *ngIf="requests.length; else noOffers">
+        <thead>
+          <tr>
+            <th>Dealer</th>
+            <th>Quantity</th>
+            <th>Offered Price</th>
+            <th>Status</th>
+            <th style="width: 180px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of requests">
+            <td>{{ r.dealerName || r.dealerId }}</td>
+            <td>{{ r.quantity }}</td>
+            <td>₹{{ r.offeredPrice }}</td>
+            <td>
+              <span class="badge"
+                    [ngClass]="{ approved: r.status==='APPROVED', rejected: r.status==='REJECTED', pending: r.status==='PENDING' }">
+                {{ r.status }}
+              </span>
+            </td>
+            <td>
+              <ng-container *ngIf="r.status==='PENDING'; else decided">
+                <button class="btn-compact btn-approve" type="button" (click)="acceptOffer(r)">Accept</button>
+                <button class="btn-compact btn-reject" type="button" (click)="rejectOffer(r)">Reject</button>
+              </ng-container>
+              <ng-template #decided>
+                <button class="btn-compact" type="button" disabled>
+                  {{ r.status==='APPROVED' ? 'Accepted' : 'Rejected' }}
+                </button>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noOffers>
+        <p class="center note">No offers yet for this crop.</p>
+      </ng-template>
+
+      <div class="footer-actions">
+        <button type="button" class="btn btn-outline" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+.role-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
+}
+
+.role-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 340px;
+  text-align: center;
+}
+
+h2 {
+  color: #2e7d32;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #555;
+  font-size: 15px;
+}
+
+.roles {
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0;
+}
+
+.role-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  background: white;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 16px;
+}
+
+.role-btn.selected {
+  border-color: #00b37a;
+  background: #e0fff4;
+  font-weight: bold;
+  transform: scale(1.05);
+}
+
+.confirm-btn {
+  background: #00b37a;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+  font-size: 15px;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+.confirm-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  background: none;
+  border: none;
+  color: #555;
+  margin-top: 1rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.error-message {
+  color: #b00020;
+  font-weight: 500;
+  margin-top: 10px;
+}

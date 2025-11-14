@@ -1,0 +1,102 @@
+<div class="container my-4">
+  <h2>📋 My Crop Requests</h2>
+
+  <div *ngIf="loading" class="alert alert-info">Loading requests...</div>
+  <div *ngIf="!loading && !requests.length" class="alert alert-warning">No requests found.</div>
+
+  <div *ngIf="!loading && requests.length">
+    <!-- Pending -->
+    <h4>🕓 Pending Requests</h4>
+    <table class="table table-striped" *ngIf="filtered.pending.length">
+      <thead>
+        <tr>
+          <th>ID</th><th>Crop</th><th>Quantity</th><th>Status</th><th>Requested</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of filtered.pending">
+          <td>{{ r.id }}</td>
+          <td>{{ r.cropName || r.cropId }}</td>
+          <td>{{ r.quantity }}</td>
+          <td><span class="badge bg-secondary">{{ statusLabel(r.status) }}</span></td>
+          <td>{{ r.createdAt || r.requestDate | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Accepted -->
+    <h4>✅ Accepted Requests</h4>
+    <table class="table table-success table-striped" *ngIf="filtered.accepted.length">
+      <thead>
+        <tr>
+          <th>ID</th><th>Crop</th><th>Quantity</th><th>Price/Unit</th><th>Total</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of filtered.accepted">
+          <td>{{ r.id }}</td>
+          <td>{{ r.cropName || r.cropId }}</td>
+          <td>{{ r.quantity }}</td>
+          <td>₹{{ r.pricePerUnit || r.offeredPrice || 0 }}</td>
+          <td>₹{{ ((r.pricePerUnit || r.offeredPrice || 0) * (r.quantity || 0)) | number:'1.2-2' }}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" (click)="payFarmer(r)">💳 Pay Now</button>
+            <button class="btn btn-outline-secondary btn-sm" (click)="addToCart(r)">➕ Add to cart</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Completed -->
+    <h4>🏁 Completed Payments</h4>
+    <table class="table table-bordered table-hover" *ngIf="filtered.completed.length">
+      <thead>
+        <tr>
+          <th>ID</th><th>Crop</th><th>Total Amount</th><th>Completed On</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of filtered.completed">
+          <td>{{ r.id }}</td>
+          <td>{{ r.cropName || r.cropId }}</td>
+          <td>₹{{ r.totalAmount || ((r.pricePerUnit || r.offeredPrice || 0) * (r.quantity || 0)) }}</td>
+          <td>{{ r.completedAt || r.updatedAt | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Rejected -->
+    <h4>❌ Rejected</h4>
+    <ul *ngIf="filtered.rejected.length">
+      <li *ngFor="let r of filtered.rejected">
+        {{ r.cropName || r.cropId }} — {{ r.status }}
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ✅ Sticky Cart Bar -->
+<div class="cart-bar" *ngIf="cart.length">
+  <div class="cart-info">
+    <span>🛒 {{ cartCount() }} item(s) in cart</span>
+    <span>💰 Total: ₹{{ cartTotal() | number:'1.2-2' }}</span>
+  </div>
+
+  <div class="cart-actions">
+    <button class="btn btn-outline-secondary" (click)="clearCart()">🗑 Clear</button>
+    <button class="btn btn-primary" [disabled]="cartBusy" (click)="checkoutCart()">
+      {{ cartBusy ? 'Processing...' : 'Checkout All' }}
+    </button>
+  </div>
+</div>
+<div class="app-toast-wrapper" aria-live="polite" aria-atomic="true">
+  <div class="app-toast"
+       *ngIf="toast.visible"
+       [ngClass]="{'toast-success': toast.type==='success', 'toast-error': toast.type==='error', 'toast-info': toast.type==='info'}"
+       role="alert">
+    <div class="toast-body">
+      <div class="toast-message">{{ toast.message }}</div>
+      <button class="toast-close" (click)="dismissToast()" aria-label="Close">✕</button>
+    </div>
+  </div>
+</div>

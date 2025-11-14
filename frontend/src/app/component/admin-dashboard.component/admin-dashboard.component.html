@@ -1,0 +1,34 @@
+<div class="admin-dashboard">
+  <h1 class="title">🛠️ Admin Dashboard</h1>
+
+  <h2 class="sub">🌱 All Crops</h2>
+
+  <div *ngIf="loading" class="loading">Loading crops…</div>
+
+  <table class="data-table" *ngIf="!loading && crops.length > 0; else noData">
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Farmer</th><th>Type</th><th>Price</th><th>Qty</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of crops">
+        <td>{{ c.id }}</td>
+        <td>{{ c.name }}</td>
+        <td>{{ c.farmerId }}</td>
+        <td>{{ c.type }}</td>
+        <td>₹{{ c.pricePerUnit }}</td>
+        <td>{{ c.quantity }}</td>
+        <td><button class="delete" (click)="deleteCrop(c.id)">🗑</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #noData>
+    <p class="empty" *ngIf="!loading && !crops.length">{{ message || 'No records found.' }}</p>
+  </ng-template>
+
+  <div class="status-message" *ngIf="message && crops.length === 0">{{ message }}</div>
+
+  
+</div>

@@ -1,0 +1,131 @@
+/* ==============================
+   🌾 ADMIN PAYMENTS PAGE STYLES
+   ============================== */
+
+/* ===== CONTAINER & TITLES ===== */
+.container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #2e7d32;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.3px;
+}
+
+/* ===== FILTERS SECTION ===== */
+.filters {
+  background: #f9fff9;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: inset 0 0 6px rgba(46, 125, 50, 0.1);
+}
+
+label.form-label {
+  font-weight: 500;
+  color: #2e7d32;
+}
+
+button.btn-success {
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+button.btn-success:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 14px rgba(46, 125, 50, 0.2);
+}
+
+/* ===== STATUS BADGES ===== */
+.badge {
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.bg-success {
+  background-color: #2e7d32 !important;
+}
+
+.bg-danger {
+  background-color: #c62828 !important;
+}
+
+.bg-warning {
+  background-color: #fbc02d !important;
+  color: #212121 !important;
+}
+
+.bg-secondary {
+  background-color: #9e9e9e !important;
+}
+
+/* ===== TABLE ===== */
+.table {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  margin-top: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.table thead {
+  background: linear-gradient(90deg, #388e3c, #4caf50);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f3f9f4;
+  transform: scale(1.01);
+}
+
+.table td, .table th {
+  vertical-align: middle;
+  padding: 0.75rem 1rem;
+}
+
+.fw-medium {
+  font-weight: 600;
+}
+
+/* ===== ALERTS ===== */
+.alert {
+  border-radius: 8px;
+  font-weight: 500;
+  background-color: #eaf5eb;
+  color: #2e7d32;
+  border: 1px solid #cde3d0;
+}
+
+/* ===== RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.2rem;
+  }
+  .table thead {
+    font-size: 0.8rem;
+  }
+  .badge {
+    font-size: 0.75rem;
+  }
+}

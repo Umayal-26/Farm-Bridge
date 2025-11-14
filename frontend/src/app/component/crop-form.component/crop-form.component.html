@@ -1,0 +1,53 @@
+<div class="form-container">
+  <div class="card shadow">
+    <h3 class="title text-success">🌿 Add New Crop</h3>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label>Name</label>
+          <input type="text" formControlName="name" class="form-control" placeholder="Crop name" />
+        </div>
+
+        <div class="col-md-6">
+          <label>Type</label>
+          <select formControlName="type" class="form-select">
+            <option value="">Select type</option>
+            <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label>Price per Unit (₹)</label>
+          <input type="number" formControlName="pricePerUnit" class="form-control" placeholder="Price" />
+        </div>
+
+        <div class="col-md-6">
+          <label>Quantity (kg)</label>
+          <input type="number" formControlName="quantity" class="form-control" placeholder="Quantity" />
+        </div>
+
+        <div class="col-md-12">
+          <label>Location</label>
+          <input type="text" formControlName="location" class="form-control" placeholder="Your farm location" />
+        </div>
+
+        <div class="col-md-12">
+          <label>Image</label>
+          <input type="file" accept="image/*" class="form-control" (change)="onFileSelect($event)" />
+          <div class="preview mt-3" *ngIf="imagePreview">
+            <img [src]="imagePreview" alt="Preview" />
+          </div>
+        </div>
+
+        <div class="col-12 text-center">
+          <button class="btn btn-success w-50" [disabled]="loading">
+            {{ loading ? 'Saving...' : 'Add Crop' }}
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <p class="mt-3 text-center text-info fw-semibold">{{ message }}</p>
+  </div>
+</div>

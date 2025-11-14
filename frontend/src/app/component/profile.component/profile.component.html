@@ -1,0 +1,52 @@
+<div class="profile-page">
+  <div class="profile-card" *ngIf="user">
+    <div class="profile-header">
+      <h2>👤 {{ user.name || user.email?.split('@')[0] }}</h2>
+      <span
+        class="role-badge"
+        [class.admin]="user.role === 'ADMIN'"
+        [class.dealer]="user.role === 'DEALER'"
+        [class.farmer]="user.role === 'FARMER'"
+      >
+        {{ user.role }}
+      </span>
+    </div>
+
+    <form *ngIf="editMode; else viewMode" (ngSubmit)="saveProfile()" class="edit-form">
+      <label>
+        <strong>Name:</strong>
+        <input [(ngModel)]="updatedUser.name" name="name" required />
+      </label>
+
+      <label>
+        <strong>Role:</strong>
+        <select [(ngModel)]="updatedUser.role" name="role" required>
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+      </label>
+
+      <div class="edit-buttons">
+        <button type="submit" [disabled]="loading">💾 Save</button>
+        <button type="button" (click)="cancelEdit()">❌ Cancel</button>
+      </div>
+
+      <p class="status-message" [class.success]="message.startsWith('✅')" [class.error]="message.startsWith('❌')">
+        {{ message }}
+      </p>
+    </form>
+
+    <ng-template #viewMode>
+      <div class="profile-details">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Provider:</strong> {{ user.provider || 'LOCAL' }}</p>
+        <p><strong>Account ID:</strong> {{ user.userId || user.id || '—' }}</p>
+        <p><strong>Status:</strong> <span class="status">Active ✅</span></p>
+      </div>
+
+      <div class="profile-actions">
+        <button class="edit-btn" (click)="enableEdit()">✏️ Edit Profile</button>
+        <button class="back-btn" (click)="goBack()">⬅ Back</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

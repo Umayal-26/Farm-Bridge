@@ -1,0 +1,104 @@
+.profile-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 20px;
+  background: #f5f9f6;
+  min-height: calc(100vh - 80px);
+}
+
+.profile-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px 40px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  animation: fadeInUp 0.6s ease;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.profile-header h2 {
+  font-size: 1.8rem;
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+.role-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+  background: #66bb6a;
+}
+
+.role-badge.admin { background: #1e88e5; }
+.role-badge.dealer { background: #8e24aa; }
+.role-badge.farmer { background: #43a047; }
+
+.profile-details p {
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.status {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.profile-actions, .edit-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 25px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+button {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: #43a047;
+  box-shadow: 0 0 10px rgba(46, 125, 50, 0.3);
+  transform: scale(1.05);
+}
+
+.edit-form input, .edit-form select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.status-message {
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.success { color: #2e7d32; }
+.error { color: #d32f2f; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

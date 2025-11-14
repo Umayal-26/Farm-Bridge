@@ -1,0 +1,101 @@
+<div class="mycrops-container py-4">
+  <h2 class="page-title mb-4">🌾 My Crops</h2>
+
+  <!-- ✅ Info / Loading messages -->
+  <div *ngIf="loading" class="loading text-muted text-center">Loading your crops...</div>
+  <div *ngIf="message" class="alert alert-info text-center">{{ message }}</div>
+
+  <!-- ✅ Crops Table -->
+  <div *ngIf="!loading && crops.length" class="table-responsive">
+    <table class="table align-middle shadow-sm">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Price (₹)</th>
+          <th>Qty (kg)</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let crop of crops">
+          <td class="fw-semibold text-muted">#{{ crop.id }}</td>
+
+          <!-- Inline editable name -->
+          <td *ngIf="editRow?.id !== crop.id">{{ crop.name }}</td>
+          <td *ngIf="editRow?.id === crop.id">
+            <input [(ngModel)]="editRow!.name" class="form-control form-control-sm" />
+          </td>
+
+          <!-- Inline editable type -->
+          <td *ngIf="editRow?.id !== crop.id">{{ crop.type }}</td>
+          <td *ngIf="editRow?.id === crop.id">
+            <input [(ngModel)]="editRow!.type" class="form-control form-control-sm" />
+          </td>
+
+          <!-- Editable price -->
+          <td *ngIf="editRow?.id !== crop.id">₹{{ crop.pricePerUnit }}</td>
+          <td *ngIf="editRow?.id === crop.id">
+            <input type="number" [(ngModel)]="editRow!.pricePerUnit" class="form-control form-control-sm" />
+          </td>
+
+          <!-- Editable quantity -->
+          <td *ngIf="editRow?.id !== crop.id">{{ crop.quantity }}</td>
+          <td *ngIf="editRow?.id === crop.id">
+            <input type="number" [(ngModel)]="editRow!.quantity" class="form-control form-control-sm" />
+          </td>
+
+          <!-- Status badge -->
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-success': crop.status === 'APPROVED',
+              'bg-warning text-dark': crop.status === 'PENDING',
+              'bg-secondary': crop.status === 'REJECTED'
+            }">
+              {{ crop.status || 'PENDING' }}
+            </span>
+          </td>
+
+          <!-- Edit / Delete / Save / Cancel -->
+          <td>
+            <div *ngIf="editRow?.id !== crop.id">
+              <button class="btn btn-outline-primary btn-sm me-1" (click)="startEdit(crop)">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm" (click)="remove(crop.id!)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+            <div *ngIf="editRow?.id === crop.id">
+              <button class="btn btn-success btn-sm me-1" (click)="save()">
+                <i class="bi bi-check-circle"></i>
+              </button>
+              <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ✅ No crops -->
+  <p *ngIf="!loading && !crops.length" class="text-center text-muted mt-4">
+    You haven’t added any crops yet. 🌱 <br />
+    <a routerLink="/farmer/crops/new" class="btn btn-success mt-3">Add a Crop</a>
+  </p>
+
+  <!-- ✅ Pagination -->
+  <div *ngIf="totalPages > 1" class="pagination-controls mt-4 d-flex justify-content-between align-items-center">
+    <button class="btn btn-outline-success btn-sm" (click)="changePage(page-1)" [disabled]="page===0">
+      <i class="bi bi-chevron-left"></i> Prev
+    </button>
+    <span class="text-muted">Page {{ page + 1 }} of {{ totalPages }}</span>
+    <button class="btn btn-outline-success btn-sm" (click)="changePage(page+1)" [disabled]="page+1 >= totalPages">
+      Next <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+</div>

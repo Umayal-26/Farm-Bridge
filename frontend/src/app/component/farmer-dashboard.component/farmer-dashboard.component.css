@@ -1,0 +1,230 @@
+/* =========================
+   FarmBridge — Farmer Dashboard (Fixes)
+   ========================= */
+
+:root {
+  --green-1: #1b5e20;
+  --green-2: #2e8b57;
+  --green-3: #43a047;
+  --white: #ffffff;
+  --text-dark: #0b1220;
+  --muted: #6b7280;
+  --radius: 14px;
+  --shadow: 0 12px 40px rgba(0,0,0,0.15);
+  --accent-shadow: 0 12px 40px rgba(46,139,87,0.18);
+  --transition: 0.22s ease;
+}
+
+/* page background */
+.farmer-dashboard {
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--green-1) 0%, var(--green-2) 60%, var(--green-3) 100%);
+  font-family: "Poppins", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: var(--text-dark);
+  box-sizing: border-box;
+}
+
+/* header */
+.fd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.title { color: #2aa53a; font-size: 2rem; font-weight: 800; text-shadow: 0 6px 18px rgba(0,0,0,0.30); }
+
+/* logout button */
+.logout-btn {
+  background: #fff;
+  color: var(--green-1);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+}
+.logout-btn:hover {
+  background: linear-gradient(90deg, var(--green-2), var(--green-3));
+  color: #2aa53a;
+  box-shadow: var(--accent-shadow);
+}
+
+/* card base */
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+
+/* form grid */
+.form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+.form input[type="text"],
+.form input[type="number"],
+.form input[type="url"],
+.form select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #cfe9d1;
+  background: #fbfff9;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+.form input:focus {
+  outline: none;
+  border-color: var(--green-2);
+  box-shadow: 0 6px 20px rgba(46,139,87,0.12);
+}
+
+/* primary add button — always clear and high contrast */
+.btn-add {
+  /* ensure full width regardless of number of columns */
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, var(--green-2), var(--green-3));
+  color: #2aa53a;
+  font-weight: 800;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(46,139,87,0.22);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.btn-add:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(46,139,87,0.30);
+}
+.btn-add:disabled {
+  background: linear-gradient(90deg,#cfe6cf,#b7dfb5);
+  color: #f6fbf6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ================================
+   Clean custom file upload control
+   ================================ */
+/* expected markup:
+  <div class="file-upload">
+    <label for="fileInput">📁 Choose File</label>
+    <span class="file-name">{{ selectedFileName }}</span>
+    <input id="fileInput" type="file" (change)="onFileChange($event)" />
+  </div>
+*/
+/* Clean custom file upload control (updated) */
+.file-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #55bc61;
+  border: 1.5px solid #cfe9d1;
+  height: 46px;
+  box-sizing: border-box;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  position: relative; /* keep positioning context */
+}
+.file-upload:hover { border-color: var(--green-2); box-shadow: 0 8px 24px rgba(24, 210, 104, 0.1); }
+
+/* label acts as visible button and contains the hidden input */
+.file-upload .file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--green-2), var(--green-3));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(46,139,87,0.14);
+  user-select: none;
+  transition: transform var(--transition), box-shadow var(--transition);
+  position: relative; /* for input placement */
+  z-index: 1;
+}
+.file-upload .file-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(46,139,87,0.20); }
+
+/* keep native input accessible but invisible and positioned exactly over the label */
+.file-upload input[type="file"] {
+  position: absolute;
+  inset: 0; /* fill the label */
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+/* selected file name (fallback shows "No file chosen" if empty) */
+.file-upload .file-name {
+  color: #12421a;
+  font-weight: 600;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  z-index: 0;
+}
+.file-upload .file-name:empty::after { content: "No file chosen"; color: #7f8f82; font-style: italic; font-weight: 600; }
+
+/* crop list and cards */
+.crop-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; margin-top: 12px; }
+.crop-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 22px rgba(0,0,0,0.08); transition: transform var(--transition); }
+.crop-card:hover { transform: translateY(-6px); box-shadow: 0 18px 44px rgba(15, 122, 61, 0.14); }
+.crop-img { width: 100%; height: 160px; object-fit: cover; background: #f2faf3; border-bottom: 1px solid #e6f2e9; }
+.info { padding: 14px; }
+.info h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--green-2); font-weight: 800; }
+.meta { display:flex; gap:10px; flex-wrap:wrap; color:#374151; font-size:0.95rem; margin-top:6px; }
+.chip { padding: 4px 10px; border-radius:999px; background:#eaf7ee; color:var(--green-2); font-weight:700; font-size:0.82rem; }
+.price { font-weight:800; color:#13321a; }
+.qty { color:#374151; }
+
+/* action buttons */
+.actions { display:flex; gap:10px; margin-top:12px; }
+.actions button { flex:1; padding:10px 12px; border-radius:10px; border:1px solid #cfe9d1; background:#fbfff9; color:var(--green-2); font-weight:800; cursor:pointer; transition: var(--transition); }
+.actions button:hover { transform: translateY(-2px); background: linear-gradient(90deg,var(--green-2),var(--green-3)); color:#119928; }
+.actions .delete { border-color:#ffd6d8; color:#b71c1c; }
+.actions .delete:hover { background:#b71c1c; color:#fff; }
+
+/* modal and badges — left as-is (kept high contrast) */
+.fd-modal-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.45); display:flex; justify-content:center; align-items:center; z-index:1200; }
+.fd-modal { width:680px; max-width: calc(100% - 36px); background:#fff; padding:20px; border-radius:10px; box-shadow:0 18px 60px rgba(0,0,0,0.18); }
+.badge { padding:6px 10px; border-radius:999px; font-weight:800; color:#fff; font-size:.8rem; text-transform:uppercase;}
+.badge.pending { background:#f2b41b; color:#2f2f23; }
+.badge.approved { background: var(--green-2); }
+.badge.rejected { background:#d32f2f; }
+
+/* responsive */
+@media (max-width: 880px) {
+  .form button { grid-column: 1 / -1; }
+  .file-upload { height: 44px; gap: 8px; padding: 8px; }
+  .crop-list { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+@media (max-width: 520px) {
+  .fd-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .title { font-size: 1.6rem; }
+}

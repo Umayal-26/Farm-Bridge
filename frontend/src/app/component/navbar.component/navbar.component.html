@@ -1,0 +1,50 @@
+<nav class="navbar" *ngIf="showNavbar">
+  <div class="nav-left" (click)="goHome()">
+    <h1 class="logo">🌾 Farm-Bridge</h1>
+  </div>
+
+  <div class="nav-right" *ngIf="user">
+    <!-- Dealer Links -->
+    <ng-container *ngIf="user.role === 'DEALER'">
+      <a routerLink="/dealer/crops" routerLinkActive="active" class="nav-link">🌾 Crops</a>
+      <a routerLink="/dealer/cart" routerLinkActive="active" class="nav-link">
+        🛒 Cart <span *ngIf="cartCount">({{ cartCount }})</span>
+      </a>
+      <a routerLink="/dealer/requests" routerLinkActive="active" class="nav-link">📋 Requests</a>
+    </ng-container>
+
+    <!-- Farmer Links -->
+    <ng-container *ngIf="user.role === 'FARMER'">
+      <a routerLink="/farmer" class="nav-link">🌱 My Crops</a>
+      <a routerLink="/farmer/requests" class="nav-link">📩 Requests</a>
+    </ng-container>
+
+    <!-- Admin Links -->
+    <ng-container *ngIf="user.role === 'ADMIN'">
+      <a routerLink="/admin/crops" class="nav-link">🌾 Manage Crops</a>
+      <a routerLink="/admin/payments" class="nav-link">💰 Payments</a>
+    </ng-container>
+
+    <!-- Visible Logout link (right side) -->
+    <button class="nav-link" (click)="logout()" title="Logout">🚪 Logout</button>
+
+    <!-- Profile Dropdown -->
+    <div class="profile-container" (click)="toggleDropdown()">
+      <span class="username">{{ user.email?.split('@')[0] || 'User' }}</span>
+      <span
+        class="role-badge"
+        [class.admin]="user.role === 'ADMIN'"
+        [class.dealer]="user.role === 'DEALER'"
+        [class.farmer]="user.role === 'FARMER'">
+        {{ user.role }}
+      </span>
+      <i class="material-icons arrow" [class.open]="dropdownOpen">expand_more</i>
+
+      <div class="dropdown-menu" *ngIf="dropdownOpen" style="display: flex;">
+        <button (click)="viewProfile()">👤 View Profile</button>
+        <!-- keep logout here as well as a fallback -->
+        <button (click)="logout()">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,105 @@
+<div class="login-hero">
+  <!-- Background / visual branding area -->
+  <div class="brand-visual" aria-hidden="true"></div>
+
+  <!-- Main login wrapper -->
+  <div class="login-wrap">
+    <!-- Brand logo and name -->
+    <figure class="brand">
+      <img src="assets/images/logo-bg.png" alt="FarmBridge logo" class="brand-img" />
+      <figcaption class="brand-name">
+        Farm<span>Bridge</span>
+      </figcaption>
+    </figure>
+
+    <!-- Login card -->
+    <div class="login-card" role="form" aria-labelledby="loginTitle">
+      <h2 id="loginTitle">Welcome back!!</h2>
+      <p class="subtitle">Sign in to continue growing with FarmBridge 🌾</p>
+
+      <!-- Email/Password form -->
+      <form (ngSubmit)="submit()" class="form-box" novalidate>
+        <label class="field">
+          <input
+            [(ngModel)]="email"
+            name="email"
+            type="email"
+            placeholder="Enter your Email"
+            required
+            autocomplete="username"
+          />
+        </label>
+
+        <label class="field">
+          <input
+            [(ngModel)]="password"
+            name="password"
+            type="password"
+            placeholder="Enter your Password"
+            required
+            autocomplete="current-password"
+          />
+        </label>
+
+        <button type="submit" class="btn-primary" [disabled]="loading">
+          <span *ngIf="!loading">Login</span>
+          <span *ngIf="loading">Logging in…</span>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="divider"><span>or continue with</span></div>
+
+      <!-- OAuth section -->
+      <div class="oauth-area">
+        <!-- Primary OAuth component -->
+        <app-oauth [clientId]="clientId" (credential)="onGoogleToken($event)"></app-oauth>
+
+        <!-- Fallback Google button (only shown if OAuth component fails or is missing) -->
+        <button
+          class="oauth-fallback"
+          *ngIf="!oauthAvailable"
+          (click)="startLegacyGoogleAuth()"
+          aria-label="Sign in with Google (fallback)">
+          <span class="google-icon" aria-hidden="true">
+            <!-- Inline Google SVG icon -->
+            <svg width="18" height="18" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg" focusable="false" role="img">
+              <path fill="#4285f4" d="M533.5 278.4c0-17.9-1.5-35.2-4.4-52H272v98.7h147.3c-6.4 34.7-25.5 64.1-54.6 83.8v69.6h88.3c51.6-47.5 80.5-117.6 80.5-200.1z"/>
+              <path fill="#34a853" d="M272 544.3c73.7 0 135.6-24.5 180.8-66.6l-88.3-69.6c-24.7 16.5-56.4 26.3-92.5 26.3-71 0-131.2-47.9-152.6-112.3H32.3v70.7C77 487.9 168.7 544.3 272 544.3z"/>
+              <path fill="#fbbc04" d="M119.4 323.9c-10.7-31.6-10.7-65.8 0-97.4V156h-87.1C7.6 201.6 0 237.9 0 272.5s7.6 70.9 32.3 116.5l87.1-65.1z"/>
+              <path fill="#ea4335" d="M272 108.6c38 0 72.1 13.1 99 38.8l74.1-74.1C404.9 27 346.2 0 272 0 168.7 0 77 56.4 32.3 141.9l87.1 65.1C140.8 156.5 201 108.6 272 108.6z"/>
+            </svg>
+          </span>
+          Sign in with Google
+        </button>
+      </div>
+
+      <!-- Error message -->
+      <p *ngIf="error" class="error" role="alert">{{ error }}</p>
+
+      <!-- Signup prompt -->
+      <p class="signup">
+        Don’t have an account?
+        <a routerLink="/register">Create one</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Role selection modal (appears when backend returns 202) -->
+<div class="role-modal-backdrop" *ngIf="showRoleModal" role="dialog" aria-modal="true">
+  <div class="role-modal" role="document" aria-labelledby="roleTitle">
+    <button class="close-x" (click)="showRoleModal=false" aria-label="Close">✕</button>
+    <h3 id="roleTitle">Choose your role</h3>
+    <p>Continue signing in as <strong>{{ gPendingName }} ({{ gPendingEmail }})</strong></p>
+
+    <div class="role-buttons">
+      <button class="btn btn-primary" (click)="confirmGoogleRole('FARMER')" [disabled]="loading">I'm a Farmer</button>
+      <button class="btn btn-outline" (click)="confirmGoogleRole('DEALER')" [disabled]="loading">I'm a Dealer</button>
+    </div>
+
+    <p class="role-note">
+      If you already have an account, pick the role that matches your existing account.
+    </p>
+  </div>
+</div>

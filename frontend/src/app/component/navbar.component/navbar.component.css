@@ -1,0 +1,369 @@
+/* ---------------------------
+   Farm-Bridge — Professional Navbar
+   Drop into component stylesheet
+   --------------------------- */
+
+/* Palette + layout variables */
+:root {
+  --nav-bg: #ffffff;               /* primary navbar surface */
+  --nav-contrast: #f7fafc;         /* subtle underlying tint for gradient */
+  --text: #0F172A;                 /* main text */
+  --muted: #6B7280;                /* secondary/muted text */
+  --accent: #2F9E44;               /* brand green (primary action) */
+  --accent-2: #0F5C8A;             /* supporting blue */
+  --danger: #E11D48;
+
+  --shadow-1: 0 6px 18px rgba(8, 18, 28, 0.08);
+  --shadow-2: 0 12px 36px rgba(8, 18, 28, 0.12);
+
+  --radius: 12px;
+  --pill-radius: 999px;
+  --nav-height: 64px;
+  --gap: 12px;
+
+  --transition-fast: 140ms;
+  --transition-mid: 220ms;
+}
+
+/* Base container — centered, subtle elevation */
+.navbar {
+  width: 100%;
+  max-width: 1200px;
+  margin: 10px auto;
+  padding: 8px 18px;
+  height: var(--nav-height);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+
+  background: linear-gradient(180deg, var(--nav-bg), var(--nav-contrast));
+  border-radius: calc(var(--radius) * 0.75);
+  box-shadow: var(--shadow-1);
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  backdrop-filter: blur(6px);
+}
+
+/* Logo / left side */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.nav-left .logo {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Right side layout */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  white-space: nowrap;
+}
+
+/* Generic link appearance */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform var(--transition-fast) ease,
+              box-shadow var(--transition-fast) ease,
+              background var(--transition-fast) ease,
+              color var(--transition-fast) ease;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+/* Hover / focus states (stronger contrast) */
+.nav-link:hover,
+.nav-link:focus {
+  transform: translateY(-2px);
+  background: linear-gradient(90deg, rgba(47,158,68,0.08), rgba(15,92,138,0.04));
+  box-shadow: 0 6px 18px rgba(15, 92, 138, 0.04);
+  color: var(--accent);
+  outline: none;
+}
+
+/* Active / selected tab */
+.nav-link.active {
+  background: linear-gradient(90deg, rgba(47,158,68,0.12), rgba(47,158,68,0.06));
+  color: var(--accent);
+  box-shadow: inset 0 -2px 0 rgba(47,158,68,0.10);
+}
+
+/* Cart inline count / small badges */
+.nav-link span {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.nav-link .cart-badge {
+  margin-left: 6px;
+  font-size: 0.82rem;
+  padding: 2px 8px;
+  border-radius: var(--pill-radius);
+  background: rgba(15,23,42,0.06);
+  color: var(--text);
+}
+
+/* Profile container */
+.profile-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--pill-radius);
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: background var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+}
+.profile-container:hover,
+.profile-container:focus {
+  background: rgba(15, 23, 42, 0.03);
+  box-shadow: 0 6px 14px rgba(15,23,42,0.02);
+  outline: none;
+}
+
+/* Username + role */
+.username {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95rem;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.role-badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: var(--pill-radius);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+
+/* Role color variants (subtle, accessible) */
+.role-badge.admin {
+  color: #ffffff;
+  background: linear-gradient(90deg, #0ea5a5, #0369a1); /* teal -> blue */
+  border-color: rgba(2,6,23,0.08);
+}
+.role-badge.dealer {
+  color: #083344;
+  background: rgba(47,158,68,0.12);
+  border-color: rgba(47,158,68,0.12);
+}
+.role-badge.farmer {
+  color: #264a2e;
+  background: rgba(124,179,66,0.12);
+  border-color: rgba(124,179,66,0.12);
+}
+
+/* Material icon (arrow) */
+.material-icons.arrow {
+  font-size: 20px;
+  color: var(--muted);
+  transition: transform var(--transition-fast) ease, color var(--transition-fast) ease;
+}
+.material-icons.arrow.open {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+/* Dropdown menu — polished card style */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(var(--nav-height) + 10px);
+  min-width: 180px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid rgba(8, 18, 28, 0.04);
+  z-index: 80;
+
+  /* appear smoother even if Angular toggles directly */
+  transform: translateY(-6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform var(--transition-mid) ease, opacity var(--transition-mid) ease;
+}
+
+/* When visible — we rely on explicit show in template, but support focus-within too */
+.profile-container:focus-within .dropdown-menu,
+.profile-container .dropdown-menu[style*="display: block"],
+.profile-container .dropdown-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Dropdown button items */
+.dropdown-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast) ease;
+}
+.dropdown-menu button:hover,
+.dropdown-menu button:focus {
+  background: rgba(15, 23, 42, 0.04);
+  outline: none;
+}
+
+/* Accessibility: strong visible focus ring for keyboard users */
+:where(.nav-link, .profile-container, .dropdown-menu button):focus {
+  box-shadow: 0 0 0 4px rgba(47,158,68,0.10);
+  outline: none;
+  border-radius: 10px;
+}
+
+/* Small screens: stack & tighten spacing */
+@media (max-width: 900px) {
+  .navbar {
+    padding: 8px 12px;
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .nav-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .nav-right {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .nav-link { padding: 8px 10px; font-size: 0.92rem; }
+  .dropdown-menu { right: 12px; top: auto; bottom: calc(-1 * (var(--nav-height) - 42px)); }
+}
+
+/* Very small screens: full-width stacked links */
+@media (max-width: 520px) {
+  .nav-right { flex-direction: column; align-items: stretch; }
+  .nav-link { width: 100%; justify-content: space-between; }
+  .profile-container { justify-content: space-between; padding: 10px; }
+}
+
+/* Optional: dark-mode support (small invert) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --nav-bg: #0b1220;
+    --nav-contrast: #07101a;
+    --text: #e6eef6;
+    --muted: #9aa7b6;
+    --shadow-1: 0 6px 18px rgba(2, 6, 23, 0.6);
+    --shadow-2: 0 12px 36px rgba(2, 6, 23, 0.72);
+  }
+  .navbar { border: 1px solid rgba(255,255,255,0.04); }
+  .dropdown-menu { background: linear-gradient(180deg, #07101a, #0b1220); border: 1px solid rgba(255,255,255,0.02); }
+  .role-badge.admin { background: linear-gradient(90deg,#06b6d4,#0ea5a5); color: #022; }
+}
+
+/* Image / emoji fallback & spacing helpers (if needed) */
+.logo img { height: 28px; width: auto; object-fit: contain; display: inline-block; vertical-align: middle; }
+
+/* Minimal performance & pointer improvements */
+.navbar, .nav-link, .profile-container { -webkit-tap-highlight-color: transparent; }
+/* Strong, accessible navbar link colors — force override */
+.navbar .nav-link,
+.navbar a.nav-link,
+.navbar .nav-right .nav-link,
+.navbar .nav-link:link,
+.navbar .nav-link:visited {
+  color: #0F172A !important;         /* solid, very dark slate for contrast */
+  opacity: 1 !important;             /* ensure no semi-transparency */
+  text-shadow: none !important;
+  transition: color 160ms ease, background 160ms ease, transform 120ms ease;
+}
+
+/* Active / hovered state */
+.navbar .nav-link:hover,
+.navbar .nav-link:focus,
+.navbar .nav-link.active,
+.navbar .nav-link.router-link-active {
+  color: #2F9E44 !important;         /* brand green on hover/active */
+  background: linear-gradient(90deg, rgba(47,158,68,0.10), rgba(15,92,138,0.02)) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(15,92,138,0.04);
+}
+
+/* Ensure right-side links never wrap/clip and remain visible */
+.nav-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+/* Make sure brand & items stay inside the navbar area */
+.navbar {
+  width: calc(100% - 28px) !important; /* keep small margins but avoid clipping */
+  max-width: 1400px !important;        /* increase if needed */
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+  box-sizing: border-box;
+}
+
+/* Force role-badge & icons have high contrast */
+.role-badge, .username, .material-icons {
+  color: #0F172A !important;
+}
+
+/* If Bootstrap .navbar-light or global a rules are interfering, neutralize them */
+.navbar.navbar-light .nav-link,
+.navbar.navbar-light a.nav-link,
+a.nav-link,
+.navbar a {
+  color: inherit !important; /* inherit from .navbar .nav-link above */
+}
+
+/* Optional: small visual lift for the visible active pill */
+.navbar .nav-link.active {
+  box-shadow: inset 0 -3px 0 rgba(47,158,68,0.12) !important;
+}
+
+/* Accessibility: ensure adequate contrast for keyboard focus */
+.navbar .nav-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(47,158,68,0.10) !important;
+}

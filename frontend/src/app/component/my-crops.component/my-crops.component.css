@@ -1,0 +1,119 @@
+/* =============================
+   🌾 MY CROPS - FARMER DASHBOARD
+   ============================= */
+
+/* Container */
+.mycrops-container {
+  max-width: 950px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+/* Title */
+.page-title {
+  font-family: 'Poppins', sans-serif;
+  color: #2e7d32;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* Table */
+.table {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.table thead {
+  background: linear-gradient(90deg, #43a047, #2e7d32);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f6fbf7;
+  transform: scale(1.005);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-primary:hover {
+  background-color: #2e7d32;
+  color: #fff;
+  border-color: #2e7d32;
+}
+
+.btn-outline-danger:hover {
+  background-color: #c62828;
+  color: #fff;
+  border-color: #c62828;
+}
+
+.btn-success {
+  background: #2e7d32;
+  border: none;
+}
+
+.btn-success:hover {
+  background: #43a047;
+  transform: scale(1.05);
+}
+
+/* Inputs */
+input.form-control-sm {
+  border: 1px solid #d0e8d2;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  color: #2e7d32;
+}
+
+/* Badge */
+.badge {
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+  padding: 0.4rem 0.7rem;
+}
+
+/* Alerts */
+.alert {
+  border-radius: 10px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+/* Pagination */
+.pagination-controls {
+  border-top: 1px solid #e0f2e9;
+  padding-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mycrops-container {
+    padding: 1rem;
+  }
+  .table thead {
+    font-size: 0.85rem;
+  }
+  .btn-sm {
+    padding: 4px 8px;
+  }
+}

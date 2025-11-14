@@ -1,0 +1,55 @@
+<div class="pending-crops container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3 header-row">
+    <h3 class="title">🛡️ Pending Crops</h3>
+    <button class="btn btn-outline-success btn-sm" (click)="load()" [disabled]="loading">Refresh</button>
+  </div>
+
+  <div aria-live="polite" class="status-message">
+    <div *ngIf="message" class="alert alert-info py-2">{{ message }}</div>
+  </div>
+
+  <!-- skeletons while loading -->
+  <div *ngIf="loading" class="grid skeleton-grid" role="status" aria-busy="true">
+    <div class="card skeleton" *ngFor="let s of [1,2,3,4,5,6,7,8,9]">
+      <div class="img shimmer" aria-hidden="true"></div>
+      <div class="body">
+        <div class="line shimmer w-60"></div>
+        <div class="line shimmer w-40"></div>
+        <div class="line shimmer w-80"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- empty state -->
+  <div *ngIf="!loading && rows.length === 0" class="empty text-center py-5">
+    
+    <p class="text-muted">No crops waiting for approval.</p>
+  </div>
+
+  <!-- grid -->
+  <div class="grid" *ngIf="!loading && rows.length">
+    <div class="card" *ngFor="let r of rows; trackBy: trackById">
+      <figure class="img-wrap">
+        <img [src]="resolveImage(r.imageUrl)" alt="{{ r.name }}" class="card-img" />
+      </figure>
+      <div class="body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h5 class="name mb-1">{{ r.name }}</h5>
+          <span class="chip" aria-hidden="true">{{ r.type }}</span>
+        </div>
+        <p class="muted mb-2">
+          Qty: <b>{{ r.quantity }}</b> • Price: <b>₹ {{ r.pricePerUnit }}</b>
+        </p>
+        <p class="muted small mb-3">
+          Farmer ID: <b>{{ r.farmerId }}</b>
+          <span *ngIf="r.location"> • {{ r.location }}</span>
+        </p>
+
+        <div class="d-flex gap-2 actions">
+          <button class="btn btn-approve flex-fill" (click)="approve(r.id)">Approve</button>
+          <button class="btn btn-reject flex-fill" (click)="reject(r.id)">Reject</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

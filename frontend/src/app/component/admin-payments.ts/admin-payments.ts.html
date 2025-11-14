@@ -1,0 +1,59 @@
+<div class="container py-4">
+  <h3 class="title mb-3">💳 Payments Report</h3>
+
+  <div class="filters row g-2 align-items-end mb-3">
+    <div class="col-md-4">
+      <label class="form-label">From</label>
+      <input class="form-control" type="datetime-local" [(ngModel)]="from" />
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">To</label>
+      <input class="form-control" type="datetime-local" [(ngModel)]="to" />
+    </div>
+    <div class="col-md-4">
+      <button class="btn btn-success w-100" (click)="load()" [disabled]="loading">
+        {{ loading ? 'Loading…' : 'Load' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert alert-info py-2">{{ message }}</div>
+
+  <div class="table-responsive" *ngIf="rows.length">
+    <table class="table table-hover align-middle shadow-sm rounded">
+      <thead class="table-success">
+        <tr>
+          <th>ID</th>
+          <th>Dealer</th>
+          <th>Farmer</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>When</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of rows">
+          <td class="fw-medium">#{{ r.id }}</td>
+          <td>{{ r.dealerId }}</td>
+          <td>{{ r.farmerId }}</td>
+          <td class="fw-bold">₹ {{ r.amount | number:'1.2-2' }}</td>
+          <td>
+            <span class="badge text-light" [ngClass]="badge(r.status)">
+              {{ r.status }}
+            </span>
+          </td>
+          <td>{{ (r.paymentDate || r.createdAt) | date:'medium' }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-1"
+                    (click)="downloadPdfForRow(r)">
+              Download PDF
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="!rows.length && !loading" class="text-muted text-center mt-3">No payments for this range.</p>
+</div>

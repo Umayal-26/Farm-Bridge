@@ -1,0 +1,193 @@
+:root{
+  --bg: #f7f9fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --primary: #16a34a; /* green */
+  --danger: #ef4444;  /* red */
+  --chip-bg: rgba(15, 23, 42, 0.06);
+  --shadow: 0 6px 18px rgba(15,23,42,0.06);
+  --radius: 12px;
+  --gap: 1.25rem;
+}
+
+/* Container tweaks */
+.pending-crops {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: none;
+}
+
+/* Header */
+.header-row .title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.header-row .btn {
+  min-width: 86px;
+}
+
+/* Grid layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  margin-top: 0.75rem;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 992px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 576px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* Card */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  border: 1px solid rgba(15,23,42,0.04);
+}
+.card:focus-within,
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(15,23,42,0.08);
+}
+
+/* Image wrapper for consistent aspect ratio */
+.img-wrap {
+  width: 100%;
+  padding-top: 60%; /* 5:3 aspect */
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #eef2f6, #f8fafc);
+}
+.card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 300ms ease;
+}
+.card:hover .card-img { transform: scale(1.04); }
+
+/* Body */
+.body {
+  padding: 0.9rem 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.name {
+  font-size: 1rem;
+  margin: 0;
+  color: #0f172a;
+  line-height: 1.1;
+}
+.muted { color: var(--muted); margin: 0; }
+
+/* Chip / badge */
+.chip {
+  background: var(--chip-bg);
+  color: #0f172a;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* Actions buttons — custom look that plays nicely with bootstrap */
+.actions { margin-top: 0.25rem; }
+.btn-approve, .btn-reject {
+  border-radius: 10px;
+  padding: 0.475rem 0.6rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.btn-approve {
+  background: linear-gradient(180deg, rgba(22,163,74,0.12), rgba(22,163,74,0.06));
+  color: var(--primary);
+  box-shadow: inset 0 -1px 0 rgba(22,163,74,0.06);
+  border-color: rgba(22,163,74,0.14);
+}
+.btn-approve:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(22,163,74,0.06); }
+.btn-reject {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid rgba(239,68,68,0.12);
+}
+.btn-reject:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(239,68,68,0.04); }
+
+/* Empty state */
+.empty {
+  color: var(--muted);
+}
+.empty-img {
+  max-width: 180px;
+  opacity: 0.95;
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+/* Skeletons & shimmer */
+.skeleton-grid .card.skeleton {
+  pointer-events: none;
+  user-select: none;
+  background: linear-gradient(180deg,#ffffff,#ffffff);
+  border: 1px solid rgba(15,23,42,0.03);
+}
+.skeleton .img {
+  height: 120px;
+  background: linear-gradient(90deg, rgba(235,237,240,1) 0%, rgba(245,247,250,1) 50%, rgba(235,237,240,1) 100%);
+}
+.skeleton .body { padding: 0.9rem 1rem 1rem; }
+.skeleton .line { height: 12px; border-radius: 6px; margin-bottom: 10px; background: #eef2f6; }
+.skeleton .w-60 { width: 60%; }
+.skeleton .w-40 { width: 40%; }
+.skeleton .w-80 { width: 80%; }
+
+/* shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -420px 0; }
+  100% { background-position: 420px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #eef2f6 25%, #f8fafc 50%, #eef2f6 75%);
+  background-size: 840px 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+/* small helpers */
+.d-flex.gap-2 { gap: 0.5rem; }
+.muted.small { font-size: 0.85rem; color: var(--muted); }
+
+/* accessibility: keyboard focus */
+.card :focus,
+.btn-approve:focus,
+.btn-reject:focus,
+.header-row .btn:focus {
+  outline: 3px solid rgba(59,130,246,0.18);
+  outline-offset: 2px;
+}
+
+/* Image fallback if missing */
+.card-img[src=""], .card-img:not([src]) {
+  object-fit: contain;
+  filter: grayscale(0.2);
+  opacity: 0.9;
+  background: linear-gradient(180deg,#f8fafc,#eef2f6);
+}

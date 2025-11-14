@@ -1,0 +1,41 @@
+<div class="card">
+  <h2>💳 Received Payments</h2>
+
+  <table class="data-table" *ngIf="payments.length > 0; else noPay">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Dealer</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of payments">
+        <td>#{{ p.id }}</td>
+        <td>{{ p.dealerId }}</td>
+        <td>₹{{ p.amount }}</td>
+        <td><span [ngClass]="p.status.toLowerCase()">{{ p.status }}</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #noPay>
+    <p>No payments received yet.</p>
+  </ng-template>
+</div>
+
+<div class="card notifications">
+  <h2>🔔 Notifications</h2>
+
+  <ul *ngIf="notifications.length > 0; else noNote">
+    <li *ngFor="let n of notifications">
+      <span>{{ n.message }}</span>
+      <span>{{ n.timestamp | date:'short' }}</span>
+    </li>
+  </ul>
+
+  <ng-template #noNote>
+    <p>No notifications available.</p>
+  </ng-template>
+</div>

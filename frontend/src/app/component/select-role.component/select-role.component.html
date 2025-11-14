@@ -1,0 +1,36 @@
+<div class="role-container">
+  <div class="role-card">
+    <h2>Welcome, {{ userData?.name || 'User' }} 👋</h2>
+    <p>Please select your role to continue:</p>
+
+    <div class="roles">
+      <button
+        class="role-btn"
+        [class.selected]="selectedRole === 'FARMER'"
+        (click)="chooseRole('FARMER')"
+      >
+        👨‍🌾 Farmer
+      </button>
+
+      <button
+        class="role-btn"
+        [class.selected]="selectedRole === 'DEALER'"
+        (click)="chooseRole('DEALER')"
+      >
+        🚜 Dealer
+      </button>
+    </div>
+
+    <button
+      class="confirm-btn"
+      (click)="confirmRole()"
+      [disabled]="!selectedRole || loading"
+    >
+      {{ loading ? 'Registering...' : 'Continue' }}
+    </button>
+
+    <button class="cancel-btn" (click)="cancel()">Cancel</button>
+
+    <p *ngIf="error" class="error-message">⚠️ {{ error }}</p>
+  </div>
+</div>
