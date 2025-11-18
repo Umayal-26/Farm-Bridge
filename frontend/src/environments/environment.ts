@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8080/api',
+  apiBaseUrl: 'https://farmbridge.onrender.com',
   googleClientId: '1059635223485-nq873adf9rk0nslp3ohco1357n153rp1.apps.googleusercontent.com'
 };
