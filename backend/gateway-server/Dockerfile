@@ -1,24 +1,26 @@
 # ----- Build stage -----
-FROM maven:3.9.7-eclipse-temurin-17 AS build
+# Use Java 21 for build
+FROM maven:3.9.7-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-# copy pom and sources from this module
+# Copy the gateway-server (this backend) pom and sources
 COPY pom.xml .
 COPY src ./src
 
-# build jar (skip tests for speed)
+# Build jar (skip tests for speed)
 RUN mvn -q -DskipTests package
 
 # ----- Run stage -----
-FROM eclipse-temurin:17-jre
+# Java 21 runtime
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-# copy jar from build image
+# Copy jar from build image
 COPY --from=build /app/target/*.jar app.jar
 
-# Render provides PORT env var, default to 8080
+# Render gives PORT; default 8080
 ENV PORT=8080
 EXPOSE 8080
 
